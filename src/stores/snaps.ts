@@ -11,7 +11,7 @@ export const useSnapsStore = defineStore("snaps", {
   // could also be defined as
   // state: () => ({ count: 0 })
   actions: {
-    addImage(dataURI: any) {
+    addImage(dataURI: string) {
       this.snaps.unshift(dataURI);
       while (this.snaps.length >= 4) {
         this.snaps.pop();

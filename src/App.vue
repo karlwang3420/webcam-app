@@ -1,22 +1,13 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-// import HelloWorld from "./components/HelloWorld.vue";
-import WebcamPage from "./components/WebcamPage.vue";
+import VideoPreview from "./components/VideoPreview.vue";
 import Snaps from "./components/Snaps.vue";
 let a = 2;
 a++;
 </script>
 
 <template>
-  <!-- <div class="flex flex-row justify-center">
-    <img alt="Vue logo" width="120rem" src="./assets/vite.svg" />
-    <img alt="Vue logo" width="120px" src="./assets/logo.png" />
-    <img alt="Vue logo" width="120" src="./assets/electron.png" />
-    <img alt="Vue logo" width="120" src="./assets/ts.png" />
-  </div> -->
   <div class="flex">
-    <WebcamPage />
+    <VideoPreview />
     <Snaps />
   </div>
 </template>
