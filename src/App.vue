@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import VideoPreview from "./components/VideoPreview.vue";
-import Snaps from "./components/Snaps.vue";
-let a = 2;
-a++;
+// import VideoPreview from "./components/VideoPreview.vue";
+// import Snaps from "./components/Snaps.vue";
+import MainPage from "./components/MainPage.vue";
 </script>
 
 <template>
-  <div class="flex">
-    <VideoPreview />
-    <Snaps />
-  </div>
+  <MainPage />
 </template>
 
 <style>
-#app {
+/* #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -23,5 +19,5 @@ a++;
 }
 img {
   margin: 3px;
-}
+} */
 </style>

@@ -5,7 +5,7 @@ import Snaps from "./Snaps.vue";
 
 <template>
   <div class="flex">
-    <VideoPreview class="w-1/2 h-96" />
-    <Snaps class="w-1/2 h-96" />
+    <VideoPreview class="w-1/2" />
+    <Snaps class="w-1/2" />
   </div>
 </template>
