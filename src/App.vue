@@ -1,23 +1,23 @@
 <script setup lang="ts">
-// import VideoPreview from "./components/VideoPreview.vue";
-// import Snaps from "./components/Snaps.vue";
 import MainPage from "./components/MainPage.vue";
+import { onMounted } from "vue";
+
+onMounted(() => {
+  // check localStorage or media for dark mode information
+  if (
+    localStorage.getItem("color-theme") === "dark" ||
+    (!("color-theme" in localStorage) &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+});
 </script>
 
 <template>
   <MainPage />
 </template>
 
-<style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-img {
-  margin: 3px;
-} */
-</style>
+<style></style>

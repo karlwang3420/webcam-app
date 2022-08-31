@@ -1,21 +1,17 @@
 import { defineStore } from "pinia";
 
 interface SnapsStore {
-  snaps: any[];
+  snapshots: string[];
 }
 
 export const useSnapsStore = defineStore("snaps", {
   state: (): SnapsStore => ({
-    snaps: [],
+    snapshots: [],
   }),
-  // could also be defined as
-  // state: () => ({ count: 0 })
+
   actions: {
     addImage(dataURI: string) {
-      this.snaps.unshift(dataURI);
-      while (this.snaps.length >= 4) {
-        this.snaps.pop();
-      }
+      this.snapshots.unshift(dataURI);
     },
   },
 });
