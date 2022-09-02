@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 
 interface SnapsStore {
-  snapshots: string[];
+  snapshots: ImageData[];
 }
 
 export const useSnapsStore = defineStore("snaps", {
@@ -10,8 +10,8 @@ export const useSnapsStore = defineStore("snaps", {
   }),
 
   actions: {
-    addImage(dataURI: string) {
-      this.snapshots.unshift(dataURI);
+    addImage(imageData: ImageData) {
+      this.snapshots.unshift(imageData);
     },
   },
 });

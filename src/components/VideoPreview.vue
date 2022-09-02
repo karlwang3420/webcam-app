@@ -1,56 +1,92 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useSnapsStore } from "../stores/snaps";
 // import store to save snapshots
 const snapsStore = useSnapsStore();
 
 // declare some constants
 const canvasSize = { width: 640, height: 480 };
-const textPosition = { left: 10, top: canvasSize.height - 40 };
-// video HTML element linked to webcam
+const textPosition = ref({ left: 10, top: canvasSize.height - 20 });
+// HTML elements
+let canvas: HTMLCanvasElement | null = null;
 let video: HTMLVideoElement | null = null;
+let context: CanvasRenderingContext2D | null = null;
 // some reactive states
-const textInput: { value: string } = ref("");
+const textInput = ref("");
 const showText = ref(false);
+const blur = ref(4);
+const filter = computed(() => `blur(${blur.value}px)`);
 
 // on mounted, get video HTML element from dom
 onMounted(async () => {
-  video = document.getElementById("video") as HTMLVideoElement;
+  canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  if (canvas == null) throw Error("cannot find canvas element");
   const camera = await navigator.mediaDevices.getUserMedia({ video: true });
-
+  video = document.createElement("video");
+  video.width = 640;
+  video.height = 480;
   video.srcObject = camera;
   video.play();
+
+  context = canvas.getContext("2d");
+  if (context == null) throw Error("cannot find context");
+
+  // canvas update loop
+  function loop() {
+    if (context == null) throw Error("cannot find canvas context");
+    if (video == null) throw Error("cannot find video element");
+    // apply filter
+    context.filter = filter.value;
+    // flip
+    context.translate(canvasSize.width, 0);
+    context.scale(-1, 1);
+    // draw image
+    context.drawImage(video, 0, 0, canvasSize.width, canvasSize.height);
+    // save filtered image
+    const filteredImage = context.getImageData(
+      0,
+      0,
+      canvasSize.width,
+      canvasSize.height
+    );
+    // remove filter
+    context.filter = "blur(0px)";
+    // put back saved filter image
+    context.putImageData(filteredImage, 0, 0);
+    // add text
+    if (showText.value) {
+      context.font = "40px Arial";
+      context.fillStyle = "red";
+      context.fillText(
+        textInput.value,
+        textPosition.value.left,
+        textPosition.value.top
+      );
+    }
+    // flip again
+    context.translate(canvasSize.width, 0);
+    context.scale(-1, 1);
+    // recursive
+    setTimeout(loop, 1000 / 30);
+  }
+  // flip
+  context.translate(canvas.width, 0);
+  context.scale(-1, 1);
+  // start loop
+  loop();
 });
 
 /**
  * used to capture snapshots, then save snapshot in store
  */
 function snap() {
-  // create a canvas element to draw on
-  const canvas = document.createElement("canvas");
-  canvas.width = canvasSize.width;
-  canvas.height = canvasSize.height;
-  const ctx = canvas.getContext("2d");
-  if (ctx == null) throw Error("cannot find canvas context");
-  if (video == null) throw Error("cannot find video element");
-
-  // draw image to canvas. scale to target dimensions
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // draw text
-  if (showText.value) {
-    ctx.font = "40px Arial";
-    ctx.fillStyle = "red";
-    ctx.fillText(textInput.value, textPosition.left, textPosition.top);
-  }
+  if (canvas == null) throw Error("cannot find canvas element");
+  if (context == null) throw Error("cannot find canvas element");
   //convert to desired file format
-  const dataURI = canvas.toDataURL(`image/jpeg`); // can also use 'image/png'
+  const ImageData = context.getImageData(0, 0, 640, 480);
 
   // save to store
-  snapsStore.addImage(dataURI);
-
-  // delete dynamic element
-  canvas.remove();
+  snapsStore.addImage(ImageData);
 }
 </script>
 
@@ -58,22 +94,15 @@ function snap() {
   <!-- outside container -->
   <div class="item-center">
     <!-- container with border -->
-    <div class="p-4 rounded-3xl border-4 border-blue-400 border-dotted">
-      <div class="flex justify-center text-5xl dark:text-white">
+    <div
+      class="p-4 rounded-3xl border-4 border-blue-400 border-dotted dark:bg-gray-800"
+    >
+      <div class="flex justify-center text-5xl mb-4 dark:text-white">
         Video Preview
       </div>
       <!-- relative container for both video and text -->
-      <div class="mt-4 relative px-4 inline-block">
-        <video id="video" width="640" height="480" autoplay></video>
-        <div
-          v-if="showText"
-          class="absolute text-6xl text-red-600"
-          :style="`left: ${textPosition.left}px; top: ${
-            textPosition.top - 30
-          }px; font-size: 40px; font-family: Arial; `"
-        >
-          {{ textInput }}
-        </div>
+      <div class="mx-4 relative">
+        <canvas id="canvas" width="640" height="480"></canvas>
       </div>
       <!-- input and buttons -->
       <div class="mt-4 flex justify-center align-center">
@@ -83,9 +112,28 @@ function snap() {
           type="text"
         />
         <button class="ml-2 btn-primary" @click="showText = !showText">
-          顯示文字
+          {{ `${!showText ? "顯示文字" : "隱藏文字"}` }}
         </button>
         <button class="ml-2 btn-primary" @click="snap">截圖</button>
+      </div>
+      <div class="mt-4 flex justify-center item-center space-x-1">
+        <label
+          class="font-bold text-lg flex flex-col justify-center align-middle text-center"
+          for="blur-slider"
+        >
+          Blur Slider
+        </label>
+        <div class="flex flex-col justify-center">
+          <input
+            id="blur-slider"
+            v-model="blur"
+            class="w-80 h-10"
+            min="0"
+            max="10"
+            type="range"
+          />
+        </div>
+        <div class="flex flex-col justify-center">{{ blur }}</div>
       </div>
     </div>
   </div>
