@@ -14,7 +14,7 @@ let context: CanvasRenderingContext2D | null = null;
 // some reactive states
 const textInput = ref("");
 const showText = ref(false);
-const blur = ref(4);
+const blur = ref(0);
 const filter = computed(() => `blur(${blur.value}px)`);
 
 // on mounted, get video HTML element from dom
@@ -118,7 +118,7 @@ function snap() {
       </div>
       <div class="mt-4 flex justify-center item-center space-x-1">
         <label
-          class="font-bold text-lg flex flex-col justify-center align-middle text-center"
+          class="font-bold text-lg flex flex-col justify-center text-center dark:text-white"
           for="blur-slider"
         >
           Blur Slider
@@ -127,13 +127,15 @@ function snap() {
           <input
             id="blur-slider"
             v-model="blur"
-            class="w-80 h-10"
+            class="w-96 h-10"
+            type="range"
             min="0"
             max="10"
-            type="range"
           />
         </div>
-        <div class="flex flex-col justify-center">{{ blur }}</div>
+        <div class="flex flex-col justify-center text-lg dark:text-white">
+          {{ blur }}
+        </div>
       </div>
     </div>
   </div>
