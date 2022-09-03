@@ -1,9 +1,10 @@
 {
-  "name": "vite-vue3-electron-ts-template",
+  "name": "webcam_app",
   "private": true,
-  "version": "0.0.1",
-  "author": "Your Name",
+  "version": "1.0.0",
+  "author": "Karl Wang",
   "main": "dist/electron/main/main.js",
+  "productName": "Webcam App",
   "scripts": {
     "vite:dev": "vite",
     "vite:build": "vue-tsc --noEmit && vite build",

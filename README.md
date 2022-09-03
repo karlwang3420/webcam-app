@@ -1,5 +1,27 @@
 # Webcam App
 
+## Scripts
+
+### Install node modules
+
+```
+yarn or yarn Install
+```
+
+### Run
+
+```
+yarn app:dev
+```
+
+### Build
+
+- Installer will be in release folder
+
+```
+yarn app:build
+```
+
 ### <strong>Step 1.</strong> I started from looking at this tutorial on youtube
 
 https://www.youtube.com/watch?v=nhX9EUGIZ6o
