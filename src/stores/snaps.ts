@@ -11,7 +11,7 @@ export const useSnapsStore = defineStore("snaps", {
 
   actions: {
     addImage(imageData: ImageData) {
-      this.snapshots.unshift(imageData);
+      this.snapshots.push(imageData);
     },
   },
 });

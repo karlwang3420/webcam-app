@@ -10,7 +10,7 @@ import DarkModeButton from "./DarkModeButton.vue";
       <VideoPreview class="mt-12" />
       <Snaps class="mt-12 max-h-screen" />
       <div>
-        <DarkModeButton class="m-4" />
+        <DarkModeButton class="bg-gray-200 dark:bg-gray-700 m-4" />
       </div>
     </div>
   </div>

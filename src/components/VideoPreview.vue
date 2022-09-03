@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, Ref } from "vue";
 import { useSnapsStore } from "../stores/snaps";
 // import store to save snapshots
 const snapsStore = useSnapsStore();
@@ -17,26 +17,39 @@ const showText = ref(false);
 const blur = ref(0);
 const filter = computed(() => `blur(${blur.value}px)`);
 
-// on mounted, get video HTML element from dom
 onMounted(async () => {
+  // on mounted, get canvas HTML element from dom
   canvas = document.getElementById("canvas") as HTMLCanvasElement;
   if (canvas == null) throw Error("cannot find canvas element");
+  // find camera
   const camera = await navigator.mediaDevices.getUserMedia({ video: true });
+
+  // create video element dynamically
   video = document.createElement("video");
-  video.width = 640;
-  video.height = 480;
+  video.width = canvasSize.width;
+  video.height = canvasSize.height;
   video.srcObject = camera;
   video.play();
-
+  // get 2D context
   context = canvas.getContext("2d");
   if (context == null) throw Error("cannot find context");
 
-  // canvas update loop
-  function loop() {
+  /**
+   * canvas update loop, ~30fps
+   *
+   * only applies filter for the image, not the text
+   *
+   * @param filter
+   * @param textPosition
+   */
+  function loop(
+    filter: Ref<string>,
+    textPosition: Ref<{ left: number; top: number }>
+  ) {
     if (context == null) throw Error("cannot find canvas context");
     if (video == null) throw Error("cannot find video element");
     // apply filter
-    context.filter = filter.value;
+    context.filter = (filter as { value: string }).value;
     // flip
     context.translate(canvasSize.width, 0);
     context.scale(-1, 1);
@@ -51,7 +64,7 @@ onMounted(async () => {
     );
     // remove filter
     context.filter = "blur(0px)";
-    // put back saved filter image
+    // put back saved filtered image
     context.putImageData(filteredImage, 0, 0);
     // add text
     if (showText.value) {
@@ -66,14 +79,16 @@ onMounted(async () => {
     // flip again
     context.translate(canvasSize.width, 0);
     context.scale(-1, 1);
-    // recursive
-    setTimeout(loop, 1000 / 30);
+    // recursive, 30fps
+    setTimeout(() => {
+      loop(filter, textPosition);
+    }, 1000 / 30);
   }
   // flip
   context.translate(canvas.width, 0);
   context.scale(-1, 1);
   // start loop
-  loop();
+  loop(filter, textPosition);
 });
 
 /**

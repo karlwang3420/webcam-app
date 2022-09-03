@@ -6,7 +6,7 @@ const snapStore = useSnapsStore();
 
 watch(snapStore.snapshots, () => {
   // get last snapshot
-  const lastSnapShot = snapStore.snapshots.pop();
+  const lastSnapShot = snapStore.snapshots[snapStore.snapshots.length - 1];
   if (lastSnapShot == undefined) return;
   const snapshotsElement = document.getElementById("snapshots");
   const canvas = document.createElement("canvas");
